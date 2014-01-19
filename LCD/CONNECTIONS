@@ -1,0 +1,9 @@
+8051 & LCD (16x2) LCD Connections
+
+EN (Enable)            : P1.4
+RS (Register Select)   : P1.5
+D4 (Data Bit 4)        : P1.0
+D5 (Data Bit 5)        : P1.1
+D6 (Data Bit 6)        : P1.2
+D7 (Data Bit 7)        : P1.3
+
