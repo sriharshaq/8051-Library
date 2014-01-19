@@ -1,10 +1,10 @@
-Library for AVR is free software for MSP430 Launchpad
+Library for 8051 is free software for 8051 family MCU's
 
 For Copying and licence information pleae see 'COPYING' and 'LICENCE' file
 
 Development Tools Required
-Toolchain    : AVR GCC (Opensource toolchain for AVR Controllers) 
-Text Editor  : Programmer's notepad Prefered (Use any text editor) or Use AVR Studio (An IDE from Atmel)
+Toolchain    : SDCC (Opensource toolchain for 8051/PIC Controllers) 
+Text Editor  : Programmer's notepad Prefered (Use any text editor) or Use Codeblocks with SDCC (An IDE for SDCC)
 Build Tool   : GNU Make 3.81 (Opensource software build automation tool for C/C++ Developers)
-Flasher       : Avrdude (A command line flashing software for AVR MCU's)
+Flasher      : Flash Magic (Flashing tool from NXP Semiconductor)
 
