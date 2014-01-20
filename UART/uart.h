@@ -1,9 +1,33 @@
+/***************************************************************************************************************
+    This file is part of Library for 8051.
+
+    Library for 8051 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Library for 8051 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Library for 8051.  If not, see <http://www.gnu.org/licenses/>.
+/**************************************************************************************************************/
+
+/***
+**   File       : uart.h
+**   Author     : Sriharsha
+**   Website    : www.zuna.in
+**   Email      : helpzuna@gmail.com
+**   Description: This is the include file for 8051 uart driver
+***/
+
 #ifndef __uart_h__
 #define __uart_h__
 
-#include <8051.h>
-#include <stdio.h>
-
+#include <8051.h>             // 8051 Peripheral Address preprocessor file
+#include <stdio.h>            // Standard input/output file used in Serialintwrite (sprintf)
 
 #define SERIAL_RX_INTERRUPT_ENABLE   1
 
@@ -52,7 +76,7 @@
 
 /***************** Prototypes ****************************/
 extern void           Serialbegin(unsigned long);
-extern __bit          Serialavailable(void);
+extern __bit           Serialavailable(void);
 extern void           Serialwrite(unsigned char);
 extern void           Serialprint(unsigned char *);
 extern unsigned char  Serialread(void);
