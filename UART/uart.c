@@ -43,6 +43,8 @@ unsigned long OscillatorFrequency = 11059200;
  volatile unsigned char uartNewLineCount = 0;
 // It holds every new line index
  volatile unsigned char uartNewLineIndexes[NEW_LINE_INDEX_BUFFER_SIZE];
+// It hold single byte (Last Received)
+ volatile unsigned char uartReadByte = CHAR_NULL;
 
 #endif
 
@@ -158,9 +160,10 @@ EA = 1;
 void Serialflush(void)
 {
 unsigned char i;
-uartReadCount    = 0; // Clear Uart Byte Count
-uartNewLineFlag  = 0; // Clear New Line Flag
-uartNewLineCount = 0; // Clear New Line Count
+uartReadCount    = 0;           // Clear Uart Byte Count
+uartNewLineFlag  = 0;           // Clear New Line Flag
+uartNewLineCount = 0;           // Clear New Line Count
+uartReadByte     = CHAR_NULL;   // Clear Last Read Byte
 
 // Flush New Line Index Buffer
 for(i=0;i<=NEW_LINE_INDEX_BUFFER_SIZE;i++)
@@ -169,6 +172,16 @@ uartNewLineIndexes[i] = CHAR_NULL;
 // Flush Uart Read Buffer
 for(i=0;i<=UART_RX_BUFFER_SIZE;i++)
 uartReadBuffer[i] = CHAR_NULL;
+}
+
+/*** Function    : SerialReadByteFlush
+**   Parameters  : None
+**   Return      : None
+**   Description : It clears the UART Read Byte (uartReadByte)
+**/
+void SerialReadByteFlush(void)
+{
+uartReadByte     = CHAR_NULL;   // Clear Last Read Byte
 }
 
 /*** Function    : uartISR
@@ -180,8 +193,9 @@ void uartISR(void) __interrupt (4)
 {
 EA = 0;                                      // Disable Global Interrupt Flag
 RI = 0;                                      // Clear RI flag
-uartReadBuffer[uartReadCount++] = SBUF;
-if(SBUF == LF)
+uartReadByte = SBUF;                         // Read Byte from SBUF
+uartReadBuffer[uartReadCount++] = uartReadByte;
+if(uartReadByte == LF)
 {
 uartNewLineIndexes[uartNewLineCount] = uartReadCount;
 uartNewLineCount++;

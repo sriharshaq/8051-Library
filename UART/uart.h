@@ -91,6 +91,7 @@ extern void          Serialflush(void);
 
 
 extern volatile __bit                  uartNewLineFlag;
+extern volatile unsigned char          uartReadByte;
 extern volatile unsigned char          uartReadBuffer[UART_RX_BUFFER_SIZE];
 extern volatile unsigned int           uartReadCount;
 extern volatile unsigned char          uartNewLineCount;
