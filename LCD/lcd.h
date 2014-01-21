@@ -26,7 +26,25 @@
 #ifndef __lcd_h__
 #define __lcd_h__
 
-#include <8051.h>
+#ifndef SDCC
+#define SDCC 0
+#endif
+#ifndef KEIL
+#define KEIL 1
+#endif
+
+#ifndef TOOLCHAIN
+#define TOOLCHAIN SDCC
+#endif
+
+#if TOOLCHAIN   == SDCC
+#include <8051.h>             // 8051 Peripheral Address preprocessor file
+#elif TOOLCHAIN == KEIL
+#include <reg51.h>
+#else
+#error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
+#endif
+
 #include <stdio.h>
 
 // If you are using R/W Pin

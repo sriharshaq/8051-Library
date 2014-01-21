@@ -16,16 +16,13 @@
 /**************************************************************************************************************/
 
 
-/** @file testlcd.c
- *  @This is the test code for LCD driver
- *
- *  This contains the test code for the lcd driver (16x2,20x4 etc..)
- *
- *  @author  Sriharsha
- *  @Website www.zuna.in
- *  @Email   helpzuna@gmail.com
- */
-
+/***
+**   File       : testlcd.c
+**   Author     : Sriharsha
+**   Website    : www.zuna.in
+**   Email      : helpzuna@gmail.com
+**   Description: This is test code for 8051 LCD driver
+***/
 
 #include "lcd.h"                         // Include LCD driver
 

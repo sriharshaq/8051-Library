@@ -26,7 +26,24 @@
 #ifndef __uart_h__
 #define __uart_h__
 
+#ifndef SDCC
+#define SDCC 0
+#endif
+#ifndef KEIL
+#define KEIL 1
+#endif
+
+#ifndef TOOLCHAIN
+#define TOOLCHAIN SDCC
+#endif
+
+#if TOOLCHAIN   == SDCC
 #include <8051.h>             // 8051 Peripheral Address preprocessor file
+#elif TOOLCHAIN == KEIL
+#include <reg51.h>
+#else
+#error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
+#endif
 #include <stdio.h>            // Standard input/output file used in Serialintwrite (sprintf)
 
 #define SERIAL_RX_INTERRUPT_ENABLE   1
@@ -85,12 +102,20 @@ extern void           SetOsc(unsigned long);
 
 
 #ifdef SERIAL_RX_INTERRUPT_ENABLE
+
+#if TOOLCHAIN == SDCC
 extern void          uartISR(void) __interrupt (4);
+#elif TOOLCHAIN == KEIL
+extern void          uartISR(void) interrupt (4);
+#else
+#error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
+#endif
+
 extern void          setSerialinterrupt(void);
 extern void          Serialflush(void);
 
 
-extern volatile __bit                  uartNewLineFlag;
+extern volatile unsigned char          uartNewLineFlag;
 extern volatile unsigned char          uartReadByte;
 extern volatile unsigned char          uartReadBuffer[UART_RX_BUFFER_SIZE];
 extern volatile unsigned int           uartReadCount;

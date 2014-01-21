@@ -121,11 +121,20 @@ IE_3 = 0;
 **   Description : This is ISR for TIMER - 0 of 8051
 **/
 #ifdef ENABLE_TIMER_0_INTERRUPT
+#if TOOLCHAIN   == SDCC
 void timer0ISR(void) __interrupt(1)
 {
 TimerCount0++;
 TF0 = 0;
 }
+#elif TOOLCHAIN == KEIL
+void timer0ISR(void) interrupt(1)
+{
+TimerCount0++;
+TF0 = 0;
+}
+#error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
+#endif
 
 /*** Function    : timerClear0
 **   Parameters  : None

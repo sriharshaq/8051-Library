@@ -34,7 +34,7 @@ unsigned long OscillatorFrequency = 11059200;
 #ifdef SERIAL_RX_INTERRUPT_ENABLE
 
 // Uart New Line Flag (Set when new line received)
- volatile __bit uartNewLineFlag = 0;
+ volatile unsigned char uartNewLineFlag = 0;
 // UART Read Buffer to store Received Data
  volatile unsigned char uartReadBuffer[UART_RX_BUFFER_SIZE];
 // Uart Byte Count
@@ -189,6 +189,7 @@ uartReadByte     = CHAR_NULL;   // Clear Last Read Byte
 **   Return      : None
 **   Description : It is ISR for UART Receive (It will trigger if any byte is received)
 **/
+#if TOOLCHAIN   == SDCC
 void uartISR(void) __interrupt (4)
 {
 EA = 0;                                      // Disable Global Interrupt Flag
@@ -203,6 +204,26 @@ uartNewLineFlag = 1;
 }
 EA = 1;                                     // Everything is done , Now Enable the Global Interrupt
 }
+
+#elif TOOLCHAIN == KEIL
+void uartISR(void) interrupt (4)
+{
+EA = 0;                                      // Disable Global Interrupt Flag
+RI = 0;                                      // Clear RI flag
+uartReadByte = SBUF;                         // Read Byte from SBUF
+uartReadBuffer[uartReadCount++] = uartReadByte;
+if(uartReadByte == LF)
+{
+uartNewLineIndexes[uartNewLineCount] = uartReadCount;
+uartNewLineCount++;
+uartNewLineFlag = 1;
+}
+EA = 1;                                     // Everything is done , Now Enable the Global Interrupt
+}
+
+#else
+#error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
+#endif
 
 #endif
 

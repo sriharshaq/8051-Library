@@ -26,7 +26,24 @@
 #ifndef __timer_h__
 #define __timer_h__
 
-#include <8051.h>
+#ifndef SDCC
+#define SDCC 0
+#endif
+#ifndef KEIL
+#define KEIL 1
+#endif
+
+#ifndef TOOLCHAIN
+#define TOOLCHAIN SDCC
+#endif
+
+#if TOOLCHAIN   == SDCC
+#include <8051.h>             // 8051 Peripheral Address preprocessor file
+#elif TOOLCHAIN == KEIL
+#include <reg51.h>
+#else
+#error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
+#endif
 
 #define ENABLE_TIMER_0
 //#define ENABLE_TIMER_1
@@ -49,8 +66,16 @@ extern timerStop(unsigned char);                                   // Timer Numb
 
 
 #ifdef ENABLE_TIMER_0_INTERRUPT
+
+#if TOOLCHAIN   == SDCC
 extern void timer0ISR(void) __interrupt(1);
+#elif TOOLCHAIN == KEIL
+extern void timer0ISR(void) interrupt(1);
+#else
+#error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
+#endif
 extern unsigned int TimerCount0;
+
 #endif
 
 /*extern unsigned int TimerCount1;
