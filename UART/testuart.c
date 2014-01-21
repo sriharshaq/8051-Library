@@ -48,4 +48,5 @@ while(1)
  Serialprint(uartReadBuffer);                // Print the uart read buffer
  Serialflush();                              // Flush the buffer
 }
+return 0;
 }
