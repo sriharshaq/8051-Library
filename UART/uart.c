@@ -67,12 +67,23 @@ OscillatorFrequency = OscFreq;
 **/
 void Serialbegin(unsigned long baudRate)
 {
-unsigned long autoReloadvalue = OscillatorFrequency/384;
+unsigned int autoReloadvalue;
+#if   UART_CLOCK_SOURCE == __TIMER_1__
+autoReloadvalue =  __baudRate_calc_timer_1(OscillatorFrequency,baudRate);
 TMOD  |= 0x20;
 SCON  |= 0x50;
-TL1   = 0x00;
-TH1   = (unsigned char)(256- (autoReloadvalue/baudRate));
-TR1   = 1;
+TL1    = autoReloadvalue >> 8;
+TH1    = autoReloadvalue;
+TR1    = 1;
+#elif UART_CLOCK_SOURCE == __TIMER_2__
+autoReloadvalue =  __baudRate_calc_timer_2(OscillatorFrequency,baudRate);
+T2MOD  = 0x00;
+T2CON  = 0x30;
+SCON  |= 0x50;
+RCAP2L = autoReloadvalue >> 8;
+RCAP2H = autoReloadvalue;
+TR2   = 1;
+#endif
 }
 
 /*** Function    : Serialavailable

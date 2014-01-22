@@ -26,6 +26,13 @@
 #ifndef __uart_h__
 #define __uart_h__
 
+// UART Clock Source
+#define __TIMER_1__                  0
+#define __TIMER_2__                  1
+
+#define UART_CLOCK_SOURCE            __TIMER_1__
+
+
 #ifndef SDCC
 #define SDCC 0
 #endif
@@ -37,16 +44,30 @@
 #define TOOLCHAIN SDCC
 #endif
 
+// If Toolchain is SDCC
 #if TOOLCHAIN   == SDCC
-#include <8051.h>             // 8051 Peripheral Address preprocessor file
+#if   UART_CLOCK_SOURCE == __TIMER_1__
+#include <8051.h>
+#elif UART_CLOCK_SOURCE == __TIMER_2__
+#include <8052.h>
+#endif
+
+// If Toolchain is Keil
 #elif TOOLCHAIN == KEIL
+#if   UART_CLOCK_SOURCE == __TIMER_1__
 #include <reg51.h>
+#elif UART_CLOCK_SOURCE == __TIMER_2__
+#include <reg52.h>
+#endif
+
+// If invalid raise an error
 #else
 #error "Invalid Toolchain, Please check 'TOOLCHAIN' macro (SDCC/KEIL)"
 #endif
 #include <stdio.h>            // Standard input/output file used in Serialintwrite (sprintf)
 
-#define SERIAL_RX_INTERRUPT_ENABLE   1
+// Serial Interrupt Enable
+#define SERIAL_RX_INTERRUPT_ENABLE 
 
 // UART Buffer Size
 #define UART_RX_BUFFER_SIZE          64
@@ -54,6 +75,9 @@
 // New Line Index Buffer Size
 #define NEW_LINE_INDEX_BUFFER_SIZE   10
 
+// BaudRate Calculation
+#define  __baudRate_calc_timer_1(__freq,__baud) (256 - ((__freq/384) / __baud))
+#define  __baudRate_calc_timer_2(__freq,__baud) (65536 - (__freq/(__baud*32)))
 
 // ASCII Code Definitions
 #define NUL 0x00                          // Null Character
