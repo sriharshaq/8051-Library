@@ -66,15 +66,16 @@
 #define I2C_SCAN_TIMEOUT_COUNTER_VAL     100
 
 /***************** Prototypes ******************************/
-extern unsigned char i2cBegin(unsigned char);
-extern unsigned char i2cavailable(void);
-extern void          i2cStart(void);
-extern void          i2cStop(void);
-extern void          i2cSend(unsigned char);
-extern unsigned char i2cReceive(unsigned char);
-extern void          i2cWrite(unsigned char,unsigned char);
-extern unsigned char i2cRead(unsigned char);
-extern void          i2csetAdd(unsigned char);
+extern unsigned char  i2cBegin(unsigned char);
+extern unsigned char  i2cavailable(void);
+extern void           i2cStart(void);
+extern void           i2cStop(void);
+extern void           i2cSend(unsigned char);
+extern unsigned char  i2cReceive(unsigned char);
+extern void           i2cWrite(unsigned char,unsigned char);
+extern unsigned char  i2cRead(unsigned char);
+extern void           i2csetAdd(unsigned char);
+extern unsigned char* i2cScan(unsigned char,unsigned char);
 /***********************************************************/
 
 #endif

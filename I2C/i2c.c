@@ -261,6 +261,34 @@ void i2csetAdd(unsigned char SlaveAddress)
 DevAddress = SlaveAddress;
 }
 
+/*** Function    : i2cScan
+**   Parameters  : unsigned char,unsigned char (start Address,End Address)
+**   Return      : unsigned char* (That contain Address Array and Device Count)
+**   Description : It will Scan the i2c devices connected to bus
+**/
+void i2cScan(unsigned char startAddress,unsigned char EndAddress)
+{
+unsigned char i2cAddressArray[EndAddress - startAddress];
+unsigned char DeviceCounter = 0;
+unsigned char temp;
+
+// Clear the buffer
+for(temp = 0;temp <= (EndAddress - startAddress);temp++)
+i2cAddressArray[temp] = 0;
+
+// Scan the devices
+for(temp = startAddress;temp <= EndAddress;temp++)
+{
+if(i2cBegin(temp) == 1)
+{
+DeviceCounter++;
+i2cAddressArray[] = temp;
+}
+i2cAddressArray[DeviceCounter] = DeviceCounter;
+}
+return i2cAddressArray;
+}
+
 
 
 
