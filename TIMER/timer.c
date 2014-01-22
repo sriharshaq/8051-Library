@@ -37,21 +37,11 @@ volatile unsigned int TimerCount0 = 0;
 **   Return      : None
 **   Description : It will Set the Oscillator Frequency for Timer Value Calculations
 **/
-void timerSetosc(unsigned long __OscFreqq__)
+void timerSetosc(unsigned long __OscFreq__)
 {
-oscFreq = __OscFreqq__;
+oscFreq = __OscFreq__;
 }
 
-/*** Function    : N/A (It's an union)
-**   Parameters  : N/A
-**   Return      : N/A
-**   Description : It splitts 16-bit value into two 8-bit values
-**/
-union _16_bit_splitter__
-{
-unsigned int  intVal;
-unsigned char tBytes[2];
-} __splitter__;
 
 /*** Function    : timerBegin
 **   Parameters  : unsigned char,unsigned char -> Timer Number, Timer Value (In milliseconds)
@@ -60,12 +50,13 @@ unsigned char tBytes[2];
 **/
 void timerBegin(unsigned char TimerNo,unsigned char TimerVal)
 {
+int reloadVal = 0;
 // Set Timer Mode
 TMOD |= 0x01;
 
-__splitter__.intVal = 65535 - ((TimerVal*1000) / (12/oscFreq));
-TL0 = tBytes[0];
-TH0 = tBytes[1];
+reloadVal = _timer_0_1_mode_2_calc(TimerVal,oscFreq);
+TL0 = reloadVal >> 8;
+TH0 = reloadVal;
 }
 
 /*** Function    : timerStart

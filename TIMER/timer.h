@@ -58,6 +58,14 @@
 //#define ENABLE_TIMER_1_INTERRUPT
 //#define ENABLE_TIMER_2_INTERRUPT
 
+#define _timer_0_1_mode_2_calc(__val,__freq) 65535 - ((__val*1000) / (12/__freq))
+
+// Timer 0,1 Modes
+#define TIMER_0_1_MODE_0 0x00
+#define TIMER_0_1_MODE_1 0x00
+#define TIMER_0_1_MODE_2 0x00
+#define TIMER_0_1_MODE_3 0x00
+
 
 extern timerSetosc(unsigned long);                                  // It will sets Oscillator Frequency
 extern timerBegin(unsigned char,unsigned char);//,unsigned char); // Timer Number, Timer Value (in milliseconds), Timer Mode
