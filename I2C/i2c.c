@@ -26,6 +26,7 @@
 ***/
 
 #include "i2c.h"
+#include "uart.h"
 
 unsigned char SlaveACK;
 unsigned char DevAddress = 0x00;
@@ -38,23 +39,23 @@ unsigned char DevAddress = 0x00;
 **/
 void  i2cSetPort(void)
 {
-SDADIR |= SDA;
-SCLDIR |= SCL;
-SDAOUT |= SDABIT;
-SCLOUT |= SCLBIT;
+SDADIR |= SDABIT;
+SCLDIR |= SCLBIT;
+SDA_HIGH;
+SCL_HIGH;
 }
 
 /*** Function    : i2cDelay
-**   Parameters  : None
+**   Parameters  : unsigned int
 **   Return      : None
 **   Description : It's delay loop for i2c Clock Generation
 **/
-void i2cDelay(void)
+void i2cDelay(unsigned int _clock__)
 {
-signed char i;
-for(i=I2C_CLOCK_VAR;ii--)
+signed char i,j;
+for(i=_clock__;i;i--)
 {
-;
+for(j=0;j<1275;j++);
 }
 }
 
@@ -77,16 +78,16 @@ void i2cStart(void)
 {
     // This Block will execute contiuous until i2c bus become free
 	back:
-	if(SDA==0)
+	if(SDA == 0)
 	goto back;
-	if(SCL = 0)
+	if(SCL == 0)
 	goto back;
 	// Start communication
-	SDA = 1;
-	SCL = 1;
-	i2cDelay();
-	SDA = 0;
-	SCL = 0;
+	SDA_HIGH;
+	SCL_HIGH;
+	i2cClock();
+	SDA_LOW;
+	SCL_LOW;
 }
 
 /*** Function    : i2cStartonce
@@ -96,11 +97,11 @@ void i2cStart(void)
 **/
 void i2cStartonce(void)
 {
-	SDA = 1;
-	SCL = 1;
-	i2cDelay();
-	SDA = 0;
-	SCL = 0;
+	SDA_HIGH;
+	SCL_HIGH;
+	i2cClock();
+	SDA_LOW;
+	SCL_LOW;
 }
 
 /*** Function    : i2cStop
@@ -110,11 +111,11 @@ void i2cStartonce(void)
 **/
 void i2cStop(void)
 {
-	SDA = 0;
-	SCL = 1;
-    i2cDelay();
-	SDA = 1;
-	SCL = 0;
+	SDA_LOW;
+	SCL_HIGH;
+    i2cClock();
+    SDA_HIGH;
+    SCL_LOW;
 }
 
 /*** Function    : i2cSend
@@ -129,21 +130,21 @@ void i2cSend(unsigned char uByte)
 	do
 	{
 		if(uByte & MaskByte)
-		SDA = 1;
+			SDA_HIGH;
 		else
-		SDA = 0;
-		SCL = 1;
-		i2cDelay();
-		SCL = 0;
-		i2cDelay();
+			SDA_LOW;
+		SCL_HIGH;
+		i2cClock();
+		SCL_LOW;
+	//	i2cDelay();
 		MaskByte /= 2;
 	}
 	while(MaskByte>0);
-	SDA = 1;
-	SCL = 1;
-	i2cDelay();
+	SDA_HIGH;
+	SCL_HIGH;
+	i2cClock();
 	SlaveACK = SDA;
-	SCL = 0;
+	SCL_LOW;
 }
 
 /*** Function    : i2cReceive
@@ -159,19 +160,21 @@ unsigned char i2cReceive(unsigned char MasterACK)
 	MaskByte = 0x80;
 	do
 	{
-		SCL = 1;
-		if(SDA)
+		SCL_HIGH;
+		if(SDA == 1)
+		{
 		uByte |= MaskByte;
-		SCL = 0;
+		}
+		SCL_LOW;
 		MaskByte /= 2;
 	}
 	while(MaskByte > 0);
 	if(MasterACK==1)
-		SDA = 1;
+		SDA_HIGH;
 	else
-	SDA = 0;
-	SCL = 1;
-	SDA = 1;
+		SDA_LOW;
+	SCL_LOW;
+	SDA_HIGH;
 	return uByte;
 }
 
@@ -229,26 +232,32 @@ unsigned char i2cBegin(unsigned char addr)
 {
 unsigned int _tempCount = 0;
 i2cSetPort();
+Serialprint("Port Initiated");
+SerialIntWrite(addr);
 do
 {
-i2cStartonce();
+//i2cStartonce();
+i2cStart();
 i2cSend(addr);
 if(SlaveACK==1)
 i2cStop();
-_tempCount++;
+//_tempCount++;
 }
-while(SlaveACK==1 || _tempCount == I2C_SCAN_TIMEOUT_COUNTER_VAL);
-
+while(SlaveACK==1);// || _tempCount == I2C_SCAN_TIMEOUT_COUNTER_VAL);
+/*
 if(_tempCount == I2C_SCAN_TIMEOUT_COUNTER_VAL)
 {
 _tempCount = 0; 
 return 0;
-}
-else
+}*/
+/*else
 {
 DevAddress = addr;
 return 1;
-}
+}*/
+Serialprint("Loop Out");
+DevAddress = addr;
+return 1;
 }
 
 /*** Function    : i2csetAdd
@@ -266,9 +275,9 @@ DevAddress = SlaveAddress;
 **   Return      : unsigned char* (That contain Address Array and Device Count)
 **   Description : It will Scan the i2c devices connected to bus
 **/
-void i2cScan(unsigned char startAddress,unsigned char EndAddress)
+unsigned char* i2cScan(unsigned char startAddress,unsigned char EndAddress)
 {
-unsigned char i2cAddressArray[EndAddress - startAddress];
+unsigned char i2cAddressArray[10];
 unsigned char DeviceCounter = 0;
 unsigned char temp;
 
@@ -282,9 +291,8 @@ for(temp = startAddress;temp <= EndAddress;temp++)
 if(i2cBegin(temp) == 1)
 {
 DeviceCounter++;
-i2cAddressArray[] = temp;
-}
 i2cAddressArray[DeviceCounter] = DeviceCounter;
+}
 }
 return i2cAddressArray;
 }

@@ -30,7 +30,7 @@
 #define __TIMER_1__                  0
 #define __TIMER_2__                  1
 
-#define UART_CLOCK_SOURCE            __TIMER_1__
+#define UART_CLOCK_SOURCE            __TIMER_2__
 
 
 #ifndef SDCC
@@ -67,10 +67,10 @@
 #include <stdio.h>            // Standard input/output file used in Serialintwrite (sprintf)
 
 // Serial Interrupt Enable
-#define SERIAL_RX_INTERRUPT_ENABLE 
+#define SERIAL_RX_INTERRUPT_ENABLE
 
 // UART Buffer Size
-#define UART_RX_BUFFER_SIZE          64
+#define UART_RX_BUFFER_SIZE          20
 
 // New Line Index Buffer Size
 #define NEW_LINE_INDEX_BUFFER_SIZE   10
@@ -117,7 +117,7 @@
 
 /***************** Prototypes ****************************/
 extern void           Serialbegin(unsigned long);
-extern __bit           Serialavailable(void);
+extern unsigned char Serialavailable(void);
 extern void           Serialwrite(unsigned char);
 extern void           Serialprint(unsigned char *);
 extern unsigned char  Serialread(void);

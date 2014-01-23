@@ -67,22 +67,24 @@ OscillatorFrequency = OscFreq;
 **/
 void Serialbegin(unsigned long baudRate)
 {
-unsigned int autoReloadvalue;
-#if   UART_CLOCK_SOURCE == __TIMER_1__
+volatile unsigned int autoReloadvalue;
+#if UART_CLOCK_SOURCE == __TIMER_1__
 autoReloadvalue =  __baudRate_calc_timer_1(OscillatorFrequency,baudRate);
 TMOD  |= 0x20;
 SCON  |= 0x50;
 TL1    = autoReloadvalue >> 8;
 TH1    = autoReloadvalue;
-TR1    = 1;
+TR1    = 1
 #elif UART_CLOCK_SOURCE == __TIMER_2__
-autoReloadvalue =  __baudRate_calc_timer_2(OscillatorFrequency,baudRate);
-T2MOD  = 0x00;
-T2CON  = 0x30;
-SCON  |= 0x50;
-RCAP2L = autoReloadvalue >> 8;
-RCAP2H = autoReloadvalue;
-TR2   = 1;
+autoReloadvalue=  __baudRate_calc_timer_2(OscillatorFrequency,baudRate);
+T2CON = 0x00;
+T2CON = 0x30;
+SCON  = 0x50;
+RCAP2H = autoReloadvalue >> 8;
+RCAP2L = autoReloadvalue;
+TH2 = autoReloadvalue >> 8;
+TL2 = autoReloadvalue;
+TR2    = 1;
 #endif
 }
 
@@ -91,7 +93,7 @@ TR2   = 1;
 **   Return      : __bit (If byte is available in receive buffer returns 1, else returns 0)
 **   Description : It will give the whether Receiver is available or not
 **/
-__bit Serialavailable(void)
+unsigned char Serialavailable(void)
 {
 return RI;
 }
