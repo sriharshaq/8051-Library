@@ -28,9 +28,22 @@
 #include "i2c.h"
 #include "uart.h"
 
-unsigned char SlaveACK;
+unsigned char SlaveACK   = 0x00;
 unsigned char DevAddress = 0x00;
+unsigned char ClockVar   = 0x00;
 
+/*** Function    : _time_out_timer_0__
+**   Parameters  : None
+**   Return      : None
+**   Description : It will give 25ms delay for I2C Detect Timeout
+**/
+void _time_out_timer_0__(void)
+{
+TMOD |= 0x01;
+TL0   = 0x00;	
+TH0   = 0x4C;	
+TR0   = 1;	
+}
 
 /*** Function    : i2cSetPort
 **   Parameters  : None
@@ -50,12 +63,14 @@ SCL_HIGH;
 **   Return      : None
 **   Description : It's delay loop for i2c Clock Generation
 **/
-void i2cDelay(unsigned int _clock__)
+void i2cDelay(unsigned int ClockVar)
 {
-signed char i,j;
-for(i=_clock__;i;i--)
+signed char i;
+for(i=0;i<=ClockVar;i++)
 {
-for(j=0;j<1275;j++);
+__asm
+NOP
+__endasm;
 }
 }
 
@@ -85,7 +100,7 @@ void i2cStart(void)
 	// Start communication
 	SDA_HIGH;
 	SCL_HIGH;
-	i2cClock();
+	i2cClock(ClockVar);
 	SDA_LOW;
 	SCL_LOW;
 }
@@ -99,7 +114,7 @@ void i2cStartonce(void)
 {
 	SDA_HIGH;
 	SCL_HIGH;
-	i2cClock();
+	i2cClock(ClockVar);
 	SDA_LOW;
 	SCL_LOW;
 }
@@ -113,17 +128,17 @@ void i2cStop(void)
 {
 	SDA_LOW;
 	SCL_HIGH;
-    i2cClock();
+    i2cClock(ClockVar);
     SDA_HIGH;
     SCL_LOW;
 }
 
-/*** Function    : i2cSend
+/*** Function    : i2cWritebyte
 **   Parameters  : unsigned char (1-Byte value)
 **   Return      : None
 **   Description : It will write single byte to i2c bus
 **/
-void i2cSend(unsigned char uByte)
+void i2cWritebyte(unsigned char uByte)
 {
 	unsigned char MaskByte;
 	MaskByte = 0x80;
@@ -134,25 +149,25 @@ void i2cSend(unsigned char uByte)
 		else
 			SDA_LOW;
 		SCL_HIGH;
-		i2cClock();
+		i2cClock(ClockVar);
 		SCL_LOW;
-	//	i2cDelay();
+		i2cClock(ClockVar);
 		MaskByte /= 2;
 	}
 	while(MaskByte>0);
 	SDA_HIGH;
 	SCL_HIGH;
-	i2cClock();
+	i2cClock(ClockVar);
 	SlaveACK = SDA;
 	SCL_LOW;
 }
 
-/*** Function    : i2cReceive
+/*** Function    : i2cReadbyte
 **   Parameters  : unsigned char (Master ACK)
 **   Return      : unsigned char (1-Byte value)
 **   Description : It will read single byte from i2c bus
 **/
-unsigned char i2cReceive(unsigned char MasterACK)
+unsigned char i2cReadbyte(unsigned char MasterACK)
 {
 	unsigned char uByte;
 	unsigned char MaskByte;
@@ -188,13 +203,13 @@ void i2cWrite(unsigned char Byte,unsigned char Address)
 	do
 	{
 		i2cStart();
-		i2cSend(DevAddress);
+		i2cWritebyte(DevAddress);
 		if(SlaveACK == 1)
 		i2cStop();
 	}
 	while(SlaveACK==1);
-	i2cSend(Address);
-	i2cSend(Byte);
+	i2cWritebyte(Address);
+	i2cWritebyte(Byte);
 	i2cStop();
 }
 
@@ -209,55 +224,30 @@ unsigned char i2cRead(unsigned char Address)
 	do
 	{
 		i2cStart();
-		i2cSend(DevAddress);
+		i2cWritebyte(DevAddress);
 		if(SlaveACK==1)
 		i2cStop();
 	}
 	while(SlaveACK==1);
-	i2cSend(Address);
+	i2cWritebyte(Address);
 	i2cStop();
 	i2cStart();
-	i2cSend(DevAddress+1);
-	ReadByte = i2cReceive(1);
+	i2cWritebyte(DevAddress+1);
+	ReadByte = i2cReadbyte(1);
 	i2cStop();
 	return ReadByte;
 }
 
 /*** Function    : i2cBegin
-**   Parameters  : unsigned char (Device Address)
+**   Parameters  : unsigned long (Osc Freq in Hz),unsigned long (Speed in Hz)
 **   Return      : unsigned char (1-> Device Detected,0->Device Not Detected)
 **   Description : It will read initiate the i2c communication
 **/
-unsigned char i2cBegin(unsigned char addr)
+unsigned char i2cBegin(unsigned long OscFreq,unsigned long Speed)
 {
-unsigned int _tempCount = 0;
-i2cSetPort();
-Serialprint("Port Initiated");
-SerialIntWrite(addr);
-do
-{
-//i2cStartonce();
-i2cStart();
-i2cSend(addr);
-if(SlaveACK==1)
-i2cStop();
-//_tempCount++;
-}
-while(SlaveACK==1);// || _tempCount == I2C_SCAN_TIMEOUT_COUNTER_VAL);
-/*
-if(_tempCount == I2C_SCAN_TIMEOUT_COUNTER_VAL)
-{
-_tempCount = 0; 
-return 0;
-}*/
-/*else
-{
-DevAddress = addr;
-return 1;
-}*/
-Serialprint("Loop Out");
-DevAddress = addr;
-return 1;
+unsigned char teMp = 12 / ((OscFreq / 1000)/1000);
+teMp = teMp + CLOCK_ERROR_CORRECTION;
+ClockVar = teMp / Speed;
 }
 
 /*** Function    : i2csetAdd
@@ -297,6 +287,47 @@ i2cAddressArray[DeviceCounter] = DeviceCounter;
 return i2cAddressArray;
 }
 
+/*** Function    : i2cDetect
+**   Parameters  : unsigned char (Device Address)
+**   Return      : 1 -> If detected, 0 -> If not detected
+**   Description : It will Detect the Slave 
+**/
+unsigned char i2cDetect(unsigned char _Address)
+{
+
+}
+
+/*** Function    : i2cWriteBlock
+**   Parameters  : unsigned char (Start Address),unsigned char (End Address),unsigned char* (Data)
+**   Return      : None
+**   Description : It will Write block of data into i2c bus
+**/
+void i2cWriteBlock(unsigned char sAddress,unsigned char eAddress,unsigned char *dPtr)
+{
+unsigned char duMmy;
+unsigned char i = 0;
+for(duMmy=sAddress;i<= eAddress;duMmy++)
+{
+i2cWrite(dPtr[i],duMmy);
+i++;
+}
+}
+
+/*** Function    : i2cReadBlock
+**   Parameters  : unsigned char (Start Address),unsigned char (End Address),unsigned char* (Data)
+**   Return      : None
+**   Description : It will Read block of data into i2c bus
+**/
+void i2cWriteBlock(unsigned char sAddress,unsigned char eAddress,unsigned char *dPtr)
+{
+unsigned char duMmy;
+unsigned char i = 0;
+for(duMmy=sAddress;i<= eAddress;duMmy++)
+{
+dPtr[i] = i2cRead(duMmy);
+i++;
+}
+}
 
 
 

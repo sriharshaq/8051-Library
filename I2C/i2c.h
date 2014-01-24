@@ -27,6 +27,7 @@
 #ifndef __i2c_h__
 #define __i2c_h__
 
+
 #ifndef SDCC
 #define SDCC 0
 #endif
@@ -72,17 +73,27 @@
 #define I2C_CLOCK_VAR                    100
 #define I2C_SCAN_TIMEOUT_COUNTER_VAL     50000
 
-#define i2cClock() i2cDelay(5)
+#define i2cClock(val) i2cDelay(val)
+
+#define CLOCK_ERROR_CORRECTION 3
 
 /***************** Prototypes ******************************/
-extern unsigned char  i2cBegin(unsigned char);
+extern unsigned char  i2cBegin(unsigned long,unsigned long);          // Osc Freq, Speed
+extern unsigned char  i2cDetect(unsigned char);                       // Device Address
 extern unsigned char  i2cavailable(void);
+
 extern void           i2cStart(void);
 extern void           i2cStop(void);
-extern void           i2cSend(unsigned char);
-extern unsigned char  i2cReceive(unsigned char);
+
+extern void           i2cWritebyte(unsigned char);
+extern unsigned char  i2cReadbyte(unsigned char);
+
 extern void           i2cWrite(unsigned char,unsigned char);
 extern unsigned char  i2cRead(unsigned char);
+
+extern void           i2cWriteBlock(unsigned char,unsigned char,unsigned char*);
+extern void           i2cReadBlock(unsigned char,unsigned char,unsigned char*);
+
 extern void           i2csetAdd(unsigned char);
 extern unsigned char* i2cScan(unsigned char ,unsigned char);
 /***********************************************************/
