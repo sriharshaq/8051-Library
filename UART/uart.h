@@ -116,7 +116,7 @@
 #define CHAR_NULL '\0'
 
 /***************** Prototypes ****************************/
-extern void           Serialbegin(unsigned long);
+extern void           Serialbegin(unsigned long,unsigned long);
 extern unsigned char Serialavailable(void);
 extern void           Serialwrite(unsigned char);
 extern void           Serialprint(unsigned char *);

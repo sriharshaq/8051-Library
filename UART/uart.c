@@ -27,9 +27,6 @@
 
 // Globals
 
-// Oscillator Frequency (Default 11.0592 MHz)
-unsigned long OscillatorFrequency = 11059200;
-
 
 #ifdef SERIAL_RX_INTERRUPT_ENABLE
 
@@ -50,22 +47,14 @@ unsigned long OscillatorFrequency = 11059200;
 
 
 
-/*** Function    : SetOsc
-**   Parameters  : unsigned long (Oscillator Frequency in Hz)
-**   Return      : None
-**   Description : It will Set the Oscillator Frequency for Baud Rate Calculations
-**/
-void SetOsc(unsigned long OscFreq)
-{
-OscillatorFrequency = OscFreq;
-}
 
 /*** Function    : Serialbegin
-**   Parameters  : unsigned long (Standard BaudRate)
+**   Parameters  : unsigned long (OscillatorFrequency),unsigned long (Standard BaudRate)
+**   Parameters  : unsigned long (OscillatorFrequency),unsigned long (Standard BaudRate)
 **   Return      : None
 **   Description : It will Set the baud rate for serial communication
 **/
-void Serialbegin(unsigned long baudRate)
+void Serialbegin(unsigned long OscillatorFrequency,unsigned long baudRate)
 {
 volatile unsigned int autoReloadvalue;
 #if UART_CLOCK_SOURCE == __TIMER_1__

@@ -25,30 +25,18 @@
 
 #include "timer.h"
 
-unsigned long oscFreq = 11059200;
 
 #ifdef ENABLE_TIMER_0_INTERRUPT
 volatile unsigned int TimerCount0 = 0;
 #endif
 
 
-/*** Function    : timerSetosc
-**   Parameters  : unsigned long (Oscillator Frequency in Hz)
-**   Return      : None
-**   Description : It will Set the Oscillator Frequency for Timer Value Calculations
-**/
-void timerSetosc(unsigned long __OscFreq__)
-{
-oscFreq = __OscFreq__;
-}
-
-
 /*** Function    : timerBegin
-**   Parameters  : unsigned char,unsigned char -> Timer Number, Timer Value (In milliseconds)
+**   Parameters  : unsigned char,unsigned char -> Timer Number, Timer Value (In milliseconds),unsigned long -> Oscillator Frequency in Hz
 **   Return      : None
 **   Description : It will initiates the timer
 **/
-void timerBegin(unsigned char TimerNo,unsigned char TimerVal)
+void timerBegin(unsigned char TimerNo,unsigned char TimerVal,unsigned long oscFreq)
 {
 int reloadVal = 0;
 // Set Timer Mode

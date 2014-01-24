@@ -67,8 +67,7 @@
 #define TIMER_0_1_MODE_3 0x00
 
 
-extern timerSetosc(unsigned long);                                  // It will sets Oscillator Frequency
-extern timerBegin(unsigned char,unsigned char);//,unsigned char); // Timer Number, Timer Value (in milliseconds), Timer Mode
+extern timerBegin(unsigned char,unsigned char,unsigned long);//,unsigned char); // Timer Number, Timer Value (in milliseconds), Timer Mode, Oscillator Frequency
 extern timerStart(unsigned char,unsigned char);                   // Timer Number, Interrupts (Enabled,Disabled);
 extern timerStop(unsigned char);                                   // Timer Number (It will also disable interrupts)
 
