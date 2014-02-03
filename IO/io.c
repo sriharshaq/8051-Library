@@ -48,7 +48,7 @@ case 6 : if(PinState) PORT0OUT |= 1 << 6; else PORT0OUT &= (1 << 6); break;
 case 7 : if(PinState) PORT0OUT |= 1 << 7; else PORT0OUT &= (1 << 7); break;
 }
 }
-else if (PiNo < (IO_MAX * 2))
+else if (PiNo < (IO_MAX * 2) && (PiNo > (IO_MAX)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -63,7 +63,7 @@ case 7 : if(PinState) PORT1OUT |= 1 << 7; else PORT1OUT &= (1 << 7); break;
 case 7 : if(PinState) PORT1OUT |= 1 << 7; else PORT1OUT &= (1 << 7); break;
 }
 }
-else if (PiNo < (IO_MAX * 3))
+else if (PiNo < (IO_MAX * 3)  && (PiNo > (IO_MAX * 2)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -77,7 +77,7 @@ case 6 : if(PinState) PORT2OUT |= 1 << 6; else PORT2OUT &= (1 << 6); break;
 case 7 : if(PinState) PORT2OUT |= 1 << 7; else PORT2OUT &= (1 << 7); break;
 }
 }
-else if (PiNo < (IO_MAX * 4))
+else if (PiNo < (IO_MAX * 4)  && (PiNo > (IO_MAX * 3)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -114,7 +114,7 @@ case 6 : if(PORT0IN & 0x40) return HIGH; else return LOW;
 case 7 : if(PORT0IN & 0x80) return HIGH; else return LOW;
 }
 }
-else if (PiNo < (IO_MAX * 2))
+else if (PiNo < (IO_MAX * 2)  && (PiNo > (IO_MAX)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -128,7 +128,7 @@ case 6 : if(PORT1IN & 0x40) return HIGH; else return LOW;
 case 7 : if(PORT1IN & 0x80) return HIGH; else return LOW;
 }
 }
-else if (PiNo < (IO_MAX * 3))
+else if (PiNo < (IO_MAX * 3)  && (PiNo > (IO_MAX * 2)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -142,7 +142,7 @@ case 6 : if(PORT2IN & 0x40) return HIGH; else return LOW;
 case 7 : if(PORT2IN & 0x80) return HIGH; else return LOW;
 }
 }
-else if (PiNo < (IO_MAX * 4))
+else if (PiNo < (IO_MAX * 4)  && (PiNo > (IO_MAX * 3)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -179,7 +179,7 @@ case 6 : if(PinState) PORT0DIR |= 1 << 6; else PORT0DIR &= (1 << 6); break;
 case 7 : if(PinState) PORT0DIR |= 1 << 7; else PORT0DIR &= (1 << 7); break;
 }
 }
-else if (PiNo < (IO_MAX * 2))
+else if (PiNo < (IO_MAX * 2)  && (PiNo > (IO_MAX)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -194,7 +194,7 @@ case 7 : if(PinState) PORT1DIR |= 1 << 7; else PORT1DIR &= (1 << 7); break;
 case 7 : if(PinState) PORT1DIR |= 1 << 7; else PORT1DIR &= (1 << 7); break;
 }
 }
-else if (PiNo < (IO_MAX * 3))
+else if (PiNo < (IO_MAX * 3)  && (PiNo > (IO_MAX * 2)))
 {
 switch(PinNo % IO_MAX)
 {
@@ -208,7 +208,7 @@ case 6 : if(PinState) PORT2DIR |= 1 << 6; else PORT2DIR &= (1 << 6); break;
 case 7 : if(PinState) PORT2DIR |= 1 << 7; else PORT2DIR &= (1 << 7); break;
 }
 }
-else if (PiNo < (IO_MAX * 4))
+else if (PiNo < (IO_MAX * 4)  && (PiNo > (IO_MAX * 3)))
 {
 switch(PinNo % IO_MAX)
 {

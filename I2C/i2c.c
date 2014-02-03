@@ -26,7 +26,6 @@
 ***/
 
 #include "i2c.h"
-#include "uart.h"
 
 unsigned char SlaveACK   = 0x00;
 unsigned char DevAddress = 0x00;
@@ -318,7 +317,7 @@ i++;
 **   Return      : None
 **   Description : It will Read block of data into i2c bus
 **/
-void i2cWriteBlock(unsigned char sAddress,unsigned char eAddress,unsigned char *dPtr)
+void i2cReadBlock(unsigned char sAddress,unsigned char eAddress,unsigned char *dPtr)
 {
 unsigned char duMmy;
 unsigned char i = 0;
