@@ -23,6 +23,7 @@
 **   Description: This is the PCF8591 driver file with 8051
 ***/
 
+<<<<<<< HEAD
 
 void begin(void)
 {
@@ -46,3 +47,5 @@ void analogWrite(int __val)
 
 }
 
+=======
+>>>>>>> 7b87dc8e7aacf5e30416c903205ba0a92e66d671

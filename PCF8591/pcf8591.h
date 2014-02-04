@@ -29,7 +29,11 @@
 #define PCF8591_SLAVE_ADDRESS 0x90
 
 int  analogRead(unsigned char);
+<<<<<<< HEAD
 void analogWrite(int);
+=======
+void analogWrite(unsigned int);
+>>>>>>> 7b87dc8e7aacf5e30416c903205ba0a92e66d671
 void begin(void);
 
 #define ADC_CH_0 0
