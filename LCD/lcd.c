@@ -136,19 +136,19 @@ void lcdwrite8Bits(unsigned char lByte)
 	else
 		LCD_D4_PORT &= ~LCD_D4_BIT;
 #if LCD_MODE == 1
-	if(val & 0x08)
+	if(lByte & 0x08)
 			LCD_D3_PORT |=  LCD_D3_BIT;
 		else
 			LCD_D3_PORT &= ~LCD_D3_BIT;
-		if(val & 0x04)
+		if(lByte & 0x04)
 			LCD_D2_PORT |=  LCD_D2_BIT;
 		else
 			LCD_D2_PORT &= ~LCD_D2_BIT;
-		if(val & 0x02)
+		if(lByte & 0x02)
 			LCD_D1_PORT |=  LCD_D1_BIT;
 		else
 			LCD_D1_PORT &= ~LCD_D1_BIT;
-		if(val & 0x01)
+		if(lByte & 0x01)
 			LCD_D0_PORT |=  LCD_D0_BIT;
 		else
 			LCD_D0_PORT &= ~LCD_D0_BIT;
